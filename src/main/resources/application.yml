@@ -9,21 +9,35 @@ spring:
     password: root
 
 
+  application:
+    name: USER-SERVICE
+
+#  profiles:
+#    active: dev
+
+  config:
+    import: optional:configserver:http://localhost:8085  # fetching config from server
+
+
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       dialect: org.hibernate.dialect.MySQL8Dialect
-  application:
-    name: USER-SERVICE
 
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+
+
+
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+
