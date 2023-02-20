@@ -56,6 +56,12 @@ resilience4j:
         slidingWindowSize: 10 # ?????????????      Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed.
         slidingWindowType: COUNT_BASED # ?????????????   Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If the sliding window is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If the sliding window is TIME_BASED, the calls of the last slidingWindowSize seconds recorded and aggregated.
 
+  retry:
+    instances:
+      ratingHotelService:
+        maxAttempts: 3
+        waitDuration: 5s
+
 
 
 

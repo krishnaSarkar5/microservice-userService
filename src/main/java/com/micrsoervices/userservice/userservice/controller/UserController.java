@@ -5,6 +5,7 @@ import com.micrsoervices.userservice.userservice.payload.RateHotelRequestDto;
 import com.micrsoervices.userservice.userservice.services.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.ILoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,19 @@ public class UserController {
         return new ResponseEntity<User>(savedUser, HttpStatus.CREATED);
     }
 
+    int retryCount=0;
 
     //here to fetch a particular user details we depend upon two external service..... we need a circuit breaker pattern here
+
+
+//    retry basically call defined no of times before conclude it as a failed call
+
     @GetMapping("/{userId}")
     @CircuitBreaker(name = "ratingHotelBreaker",fallbackMethod = "ratingHotelFallback")
+    @Retry(name = "ratingHotelService" )
     public ResponseEntity<User> getAUser(@PathVariable String userId){
+        retryCount++;
+        System.out.println("retrying.....  "+retryCount);
         User user = userService.getAUser(userId);
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
