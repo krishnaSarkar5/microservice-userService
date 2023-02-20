@@ -5,6 +5,7 @@ import com.micrsoervices.userservice.userservice.payload.RateHotelRequestDto;
 import com.micrsoervices.userservice.userservice.services.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.ILoggerFactory;
@@ -37,8 +38,9 @@ public class UserController {
 //    retry basically call defined no of times before conclude it as a failed call
 
     @GetMapping("/{userId}")
-    @CircuitBreaker(name = "ratingHotelBreaker",fallbackMethod = "ratingHotelFallback")
-    @Retry(name = "ratingHotelService" )
+//    @CircuitBreaker(name = "ratingHotelBreaker",fallbackMethod = "ratingHotelFallback")
+//    @Retry(name = "ratingHotelService" )
+    @RateLimiter(name = "userRateLimiter" ,fallbackMethod = "ratingHotelFallback")
     public ResponseEntity<User> getAUser(@PathVariable String userId){
         retryCount++;
         System.out.println("retrying.....  "+retryCount);
@@ -75,6 +77,6 @@ public class UserController {
 
         log.info("Fallback is executed because service is down : "+ex.getMessage());
 
-        return new ResponseEntity<User>(dummYUser,HttpStatus.OK);
+        return new ResponseEntity<User>(dummYUser,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

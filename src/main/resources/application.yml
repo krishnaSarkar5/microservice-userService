@@ -62,6 +62,14 @@ resilience4j:
         maxAttempts: 3
         waitDuration: 5s
 
+  ratelimiter:
+    instances:
+      userRateLimiter:
+        limitRefreshPeriod: 4s
+        limitForPeriod: 2
+        timeoutDuration: 0s  # wait time a thread waits for permission
+
+      # in the above config here 2 requests are allowed in 4 seconds
 
 
 
