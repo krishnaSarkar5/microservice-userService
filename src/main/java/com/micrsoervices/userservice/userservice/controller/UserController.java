@@ -3,6 +3,10 @@ package com.micrsoervices.userservice.userservice.controller;
 import com.micrsoervices.userservice.userservice.entities.User;
 import com.micrsoervices.userservice.userservice.payload.RateHotelRequestDto;
 import com.micrsoervices.userservice.userservice.services.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.ILoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -23,7 +28,10 @@ public class UserController {
         return new ResponseEntity<User>(savedUser, HttpStatus.CREATED);
     }
 
+
+    //here to fetch a particular user details we depend upon two external service..... we need a circuit breaker pattern here
     @GetMapping("/{userId}")
+    @CircuitBreaker(name = "ratingHotelBreaker",fallbackMethod = "ratingHotelFallback")
     public ResponseEntity<User> getAUser(@PathVariable String userId){
         User user = userService.getAUser(userId);
         return new ResponseEntity<User>(user, HttpStatus.OK);
@@ -39,5 +47,25 @@ public class UserController {
     public ResponseEntity<User> rateHotel(@RequestBody RateHotelRequestDto request){
         User savedUser = userService.rateHotel(request);
         return new ResponseEntity<User>(savedUser, HttpStatus.CREATED);
+    }
+
+
+
+
+
+
+
+
+
+
+    // creatting fallback methods
+
+    public ResponseEntity<User> ratingHotelFallback(String  userId,Exception ex){
+
+        User dummYUser = User.builder().name("Dummy").email("dummy@dummy.com").about("This user is created dummy").build();
+
+        log.info("Fallback is executed because service is down : "+ex.getMessage());
+
+        return new ResponseEntity<User>(dummYUser,HttpStatus.OK);
     }
 }
