@@ -73,6 +73,7 @@ public class UserController {
 
     public ResponseEntity<User> ratingHotelFallback(String  userId,Exception ex){
 
+        ex.printStackTrace();
         User dummYUser = User.builder().name("Dummy").email("dummy@dummy.com").about("This user is created dummy").build();
 
         log.info("Fallback is executed because service is down : "+ex.getMessage());

@@ -28,6 +28,23 @@ spring:
       dialect: org.hibernate.dialect.MySQL8Dialect
 
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ********************************************
+      client:
+        registration:
+          my-internal-client: # name can be anything
+            provider: okta
+            authorizationGrantType: client_credentials
+            scope: internal
+            client-id: ***************************
+            client-secret: *****************************
+        provider:
+          okta:
+            issuer-uri: ***********************************
+
 
 management:
   health:
@@ -82,3 +99,10 @@ resilience4j:
 #    service-url:
 #      defaultZone: http://localhost:8761/eureka
 
+
+
+
+okta:
+  oauth2:
+    issuer: *******************************
+    audience: *****************
